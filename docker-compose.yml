@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  bot_display:
+    build: .
+    container_name: bot_display
+    restart: always
+    volumes:
+      - ./data:/app/data
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      # опционально:
+      # - DB_PATH=/app/data/user_database.db
