@@ -1,12 +1,31 @@
-version: "3.8"
+version: "3.9"
+
 services:
-  bot_display:
+  web:
     build: .
-    container_name: bot_display
+    container_name: bot_glass_web
     restart: always
+    command: >
+      sh -c "python manage.py migrate &&
+             gunicorn botproj.wsgi:application --bind 0.0.0.0:8000"
+    ports:
+      - "8004:8000"
     volumes:
       - ./data:/app/data
-    environment:
-      - BOT_TOKEN=${BOT_TOKEN}
-      # опционально:
-      # - DB_PATH=/app/data/user_database.db
+      - ./media:/app/media
+      - ./photos:/app/photos
+      - ./photos1:/app/photos1
+
+  bot:
+    build: .
+    container_name: bot_glass_tg
+    restart: always
+    command: >
+      sh -c "python manage.py runbot"
+    volumes:
+      - ./data:/app/data
+      - ./media:/app/media
+      - ./photos:/app/photos
+      - ./photos1:/app/photos1
+    depends_on:
+      - web
