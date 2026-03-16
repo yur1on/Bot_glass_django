@@ -5,9 +5,10 @@ services:
     build: .
     container_name: bot_glass_web
     restart: always
-    command: >
-      sh -c "python manage.py migrate &&
-             gunicorn botproj.wsgi:application --bind 0.0.0.0:8000"
+command: >
+  sh -c "python manage.py migrate &&
+         python manage.py collectstatic --noinput &&
+         gunicorn botproj.wsgi:application --bind 0.0.0.0:8000"
     ports:
       - "8004:8000"
     volumes:
