@@ -23,7 +23,6 @@ from aiogram.utils.exceptions import BotBlocked, ChatNotFound, RetryAfter, UserD
 import config
 from botapp.models import User, Message, BlockedUser, SizeSearch, PaymentEvent
 
-# импорт данных (как у тебя)
 from baza import (
     glass_data, glass_data2, glass_data3, glass_data4,
     glass_data5, glass_data6, glass_data7
@@ -32,20 +31,26 @@ from baza2 import glass_data9
 
 
 # ================== ПОДПИСКА / STARS ==================
-SUB_CURRENCY = "XTR"         # Telegram Stars
-SUB_PROVIDER_TOKEN = ""      # для Stars пустой
+SUB_CURRENCY = "XTR"
+SUB_PROVIDER_TOKEN = ""
 
-PLAN_MONTH_PRICE = 150
-PLAN_MONTH_DAYS = 30
+PLAN_30_PRICE = 100
+PLAN_30_DAYS = 30
 
-PLAN_YEAR_PRICE = 500
-PLAN_YEAR_DAYS = 365
+PLAN_180_PRICE = 500
+PLAN_180_DAYS = 180
 
-SUB_TITLE_MONTH = "Подписка на месяц"
-SUB_DESC_MONTH = "Полный доступ ко всем результатам бота на 1 месяц."
+PLAN_360_PRICE = 750
+PLAN_360_DAYS = 360
 
-SUB_TITLE_YEAR = "Подписка на год"
-SUB_DESC_YEAR = "Полный доступ ко всем результатам бота на 1 год."
+SUB_TITLE_30 = "Подписка на 30 дней"
+SUB_DESC_30 = "Полный доступ ко всем результатам бота на 30 дней."
+
+SUB_TITLE_180 = "Подписка на 180 дней"
+SUB_DESC_180 = "Полный доступ ко всем результатам бота на 180 дней."
+
+SUB_TITLE_360 = "Подписка на 360 дней"
+SUB_DESC_360 = "Полный доступ ко всем результатам бота на 360 дней."
 
 
 class UserRegistration(StatesGroup):
@@ -74,46 +79,29 @@ belarusian_cities = [
 ]
 BEL_CITIES_SET = set([c.lower() for c in belarusian_cities])
 
-# AD_TEXT = (
-#     '<b>Для жителей РБ 🇧🇾</b>\n'
-#     'Сервис для разборщиков мобильной техники.\n'
-#     'Канал: <a href="https://t.me/MobiraRazbor">@MobiraRazbor</a>\n'
-#     'Чат: <a href="https://t.me/mobirazbor_chat">@mobirazbor_chat</a>\n'
-#     'Сайт: <a href="https://mobirazbor.by">mobirazbor.by</a>'
-# )
-
 AD_TEXT = (
-    # '<b>Для поиска взаимозаменяемых защитных стёкол:</b>\n'
-    # 'Бот: <a href="https://t.me/safety_display_bot">@safety_display_bot</a>\n\n'
-    'Чат: <a href="https://t.me/+yJDx_G2b0hNjNTBi">@tehnosfera_chat</a>\n'
-    'Канал: <a href="https://t.me/+ze8-aO_YZ-Q0ZGEy">@tehnosfera_info</a>'
+    "📢 <b>Наши ресурсы</b>\n\n"
+    '💬 Чат: <a href="https://t.me/+yJDx_G2b0hNjNTBi">tehnosfera_chat</a>\n'
+    '📰 Канал: <a href="https://t.me/+ze8-aO_YZ-Q0ZGEy">tehnosfera_info</a>'
 )
 
-
-# ✅ не логируем эти сообщения/команды
 SKIP_LOG_TEXTS = {
     "/start",
     "/info",
-    # кнопки:
-    "🚀 start",
-    "ℹ️ Info",
+    "ℹ️ О боте",
 }
 
-# Тексты кнопок
-BTN_START = "🚀 start"
-BTN_REG = "🗂registration"
-BTN_INFO = "ℹ️ Info"
-BTN_SIZE = "🔎подбор стекла по размеру"
+BTN_REG = "📝 Регистрация"
+BTN_INFO = "ℹ️ О боте"
+BTN_SIZE = "📏 Подбор по размеру"
 BTN_SUB = "⭐ Подписка"
-BTN_STATUS = "📅 Статус"
-BTN_MENU = "↩️ В меню"
+BTN_STATUS = "📅 Мой статус"
+BTN_MENU = "↩️ Назад в меню"
 
 
 def add_src(url: str, src: str) -> str:
     return f"{url}&src={src}" if "?" in url else f"{url}?src={src}"
 
-
-# ----------------- Django ORM wrappers for async -----------------
 
 @sync_to_async(thread_sensitive=True)
 def db_is_user_blocked(user_id: int) -> bool:
@@ -252,22 +240,64 @@ def db_log_payment_event(chat_id: int, event_type: str, amount=None, currency=No
     )
 
 
-# ----------------- bot helpers -----------------
-
 async def create_menu_button():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
-    markup.row(types.KeyboardButton(BTN_START), types.KeyboardButton(BTN_INFO))
-    markup.row(types.KeyboardButton(BTN_REG), types.KeyboardButton(BTN_STATUS))
+    markup.row(types.KeyboardButton(BTN_INFO), types.KeyboardButton(BTN_STATUS))
+    markup.row(types.KeyboardButton(BTN_REG), types.KeyboardButton(BTN_SUB))
     markup.row(
-        types.KeyboardButton(BTN_SIZE, web_app=types.WebAppInfo(url=add_src(config.WEBAPP_URL, "menu"))),
-        types.KeyboardButton(BTN_SUB),
+        types.KeyboardButton(
+            BTN_SIZE,
+            web_app=types.WebAppInfo(url=add_src(config.WEBAPP_URL, "menu"))
+        )
     )
     return markup
 
 
-async def send_message_with_ad(bot: Bot, chat_id, text, reply_markup=None, parse_mode="html"):
-    ad_text = "\n\nmobirazbor.by"
-    await bot.send_message(chat_id, text + ad_text, reply_markup=reply_markup, parse_mode=parse_mode)
+def build_photo_keyboard(photo_names: list[str]) -> types.InlineKeyboardMarkup:
+    kb = types.InlineKeyboardMarkup(row_width=2)
+    clean_names = [x for x in photo_names if x]
+
+    if not clean_names:
+        return kb
+
+    if len(clean_names) == 1:
+        kb.add(types.InlineKeyboardButton("📷 Фото стекла", callback_data=f"photo:{clean_names[0]}"))
+        return kb
+
+    buttons = []
+    for idx, photo_name in enumerate(clean_names, start=1):
+        buttons.append(types.InlineKeyboardButton(f"📷 Фото {idx}", callback_data=f"photo:{photo_name}"))
+    kb.add(*buttons)
+    return kb
+
+
+async def send_welcome(bot: Bot, chat_id: int, username: str | None, registered: bool):
+    name = f"@{username}" if username else "друг"
+    if registered:
+        text = (
+            f"👋 <b>Здравствуйте, {name}!</b>\n\n"
+            "Я помогу найти <b>взаимозаменяемые защитные стёкла</b>.\n\n"
+            "Что можно сделать:\n"
+            "• найти стекло по модели\n"
+            "• подобрать по размерам\n"
+
+        )
+    else:
+        text = (
+            f"👋 <b>Здравствуйте, {name}!</b>\n\n"
+            "Это бот для поиска <b>взаимозаменяемых защитных стёкол</b>.\n\n"
+            "Перед началом работы нужна регистрация.\n\n"
+            "Нажмите:\n"
+            "• /registration\n"
+            f"• или кнопку <b>«{BTN_REG}»</b>"
+        )
+
+    await bot.send_message(
+        chat_id,
+        text,
+        parse_mode="html",
+        reply_markup=await create_menu_button(),
+    )
 
 
 def perform_size_search(height, width):
@@ -329,22 +359,7 @@ def fmt_dt(dt):
     return local_dt.strftime("%d.%m.%Y %H:%M")
 
 
-def alpha_label(n: int) -> str:
-    letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    return letters[n] if n < len(letters) else ""
-
-
-def pretty_item_prefix() -> str:
-    return "•"
-
-
 def is_service_line(item) -> bool:
-    """
-    НЕ стекло (служебные строки):
-    - display / дисплей
-    - фото / .png
-    - пустые строки
-    """
     if not isinstance(item, str):
         return False
     s = item.strip().lower()
@@ -360,19 +375,12 @@ def is_service_line(item) -> bool:
 
 
 def count_hidden_glasses(found_list: list, visible_count: int = 1) -> int:
-    """
-    Считаем, сколько СТЁКОЛ скрыто (игнорируя display/фото/.png).
-    """
     hidden_part = found_list[visible_count:]
     only_glasses = [x for x in hidden_part if not is_service_line(x)]
     return len(only_glasses)
 
 
 def extract_glasses_for_photo_caption(message_text: str) -> List[str]:
-    """
-    В подпись к фото: перечень стёкол из сообщения, где нажали кнопку "Фото".
-    Игнорируем заголовки, лотерейку, строки про фото/дисплей/скрыто/подписку.
-    """
     if not message_text:
         return []
 
@@ -406,6 +414,57 @@ def extract_glasses_for_photo_caption(message_text: str) -> List[str]:
             out.append(ln)
 
     return out
+
+
+def split_items_and_photos(found_list: list) -> tuple[list[str], list[str]]:
+    items = []
+    photos = []
+
+    for item in found_list:
+        if not isinstance(item, str):
+            continue
+        if item.lower().endswith(".png"):
+            photos.append(item)
+        else:
+            items.append(item)
+
+    return items, photos
+
+
+def format_found_response(user_message: str, found_list: list, subscribed: bool) -> tuple[str, types.InlineKeyboardMarkup]:
+    items, photos = split_items_and_photos(found_list)
+    keyboard = build_photo_keyboard(photos)
+
+    lines = [
+        f"<em><u>Взаимозаменяемые стекла по поиску 🔍<b>'{user_message}'</b> найдено:\n</u></em>",
+    ]
+
+    # ===== ЕСЛИ ЕСТЬ ПОДПИСКА =====
+    if subscribed:
+        if items:
+            for item in items:
+                lines.append(f"• {item}")
+        else:
+            lines.append("Ничего не найдено.")
+
+        return "\n".join(lines), keyboard
+
+    # ===== ЕСЛИ НЕТ ПОДПИСКИ =====
+    visible_items = items[:1]
+
+    if visible_items:
+        lines.append(f"• {visible_items[0]}")
+
+    hidden_glasses = max(len(items) - 1, 0)
+
+    # 👉 СРАЗУ БЕЗ ПУСТЫХ СТРОК
+    if hidden_glasses > 0:
+        lines.append(build_masked_list(hidden_glasses, style="lottery"))
+        lines.append(f"\n🔒 <b>Скрыто стекол:</b> {hidden_glasses}\n")
+        lines.append(f"⭐ Откройте всё: /subscribe\n или кнопка «{BTN_SUB}»")
+
+    return "\n".join(lines), keyboard
+
 
 
 async def send_updates_to_all_users_rb(bot_instance, message_text):
@@ -451,31 +510,34 @@ def build_bot():
     dp = Dispatcher(bot, storage=MemoryStorage())
     ADMIN_ID = config.ADMIN_ID
 
-    # ================== SUBSCRIBE / STATUS ==================
-
     async def show_status(chat_id: int):
         until = await db_get_subscribed_until(chat_id)
         now = timezone.now()
+
         if until and until > now:
-            await bot.send_message(
-                chat_id,
-                f"✅ <b>Подписка активна</b>\n"
-                f"Действует до: <b>{fmt_dt(until)}</b>\n\n"
-                "Спасибо за поддержку 🙌",
-                parse_mode="html",
-                reply_markup=await create_menu_button(),
+            days_left = max((until - now).days, 0)
+            text = (
+                "✅ <b>Подписка активна</b>\n\n"
+                f"📅 Действует до: <b>{fmt_dt(until)}</b>\n"
+                f"⏳ Осталось дней: <b>{days_left}</b>\n\n"
+                "Спасибо за поддержку 🙌"
             )
         else:
-            await bot.send_message(
-                chat_id,
+            text = (
                 "🔒 <b>Подписка не активна</b>\n\n"
                 "⭐ <b>Тарифы:</b>\n"
-                f"• <b>1 месяц</b>: {PLAN_MONTH_PRICE}⭐ ({PLAN_MONTH_DAYS} дней)\n"
-                f"• <b>1 год</b>: {PLAN_YEAR_PRICE}⭐ ({PLAN_YEAR_DAYS} дней)\n\n"
-                "Оформить: /subscribe или кнопка «⭐ Подписка».",
-                parse_mode="html",
-                reply_markup=await create_menu_button(),
+                f"🟢 <b>30 дней</b> — {PLAN_30_PRICE}⭐\n"
+                f"🟠 <b>180 дней</b> — {PLAN_180_PRICE}⭐\n"
+                f"🔵 <b>360 дней</b> — {PLAN_360_PRICE}⭐\n\n"
+                f"Нажмите <b>«{BTN_SUB}»</b> или используйте /subscribe"
             )
+
+        await bot.send_message(
+            chat_id,
+            text,
+            parse_mode="html",
+            reply_markup=await create_menu_button(),
+        )
 
     @dp.message_handler(commands=["status"])
     async def status_cmd(message: types.Message):
@@ -492,16 +554,23 @@ def build_bot():
         await show_status(chat_id)
 
     async def send_invoice_for_plan(chat_id: int, plan: str):
-        if plan == "month":
-            title = SUB_TITLE_MONTH
-            desc = SUB_DESC_MONTH
-            days = PLAN_MONTH_DAYS
-            price = PLAN_MONTH_PRICE
+        if plan == "30":
+            title = SUB_TITLE_30
+            desc = SUB_DESC_30
+            days = PLAN_30_DAYS
+            price = PLAN_30_PRICE
+        elif plan == "180":
+            title = SUB_TITLE_180
+            desc = SUB_DESC_180
+            days = PLAN_180_DAYS
+            price = PLAN_180_PRICE
+        elif plan == "360":
+            title = SUB_TITLE_360
+            desc = SUB_DESC_360
+            days = PLAN_360_DAYS
+            price = PLAN_360_PRICE
         else:
-            title = SUB_TITLE_YEAR
-            desc = SUB_DESC_YEAR
-            days = PLAN_YEAR_DAYS
-            price = PLAN_YEAR_PRICE
+            raise ValueError(f"Unknown plan: {plan}")
 
         prices = [LabeledPrice(label=f"Подписка ({days} дней)", amount=price)]
         payload = f"sub:{plan}:{chat_id}"
@@ -532,28 +601,28 @@ def build_bot():
 
         if await db_is_subscribed(chat_id):
             return await message.answer(
-                "✅ У вас уже активна подписка.\n"
-                "Нажмите «📅 Статус» чтобы посмотреть дату окончания.",
+                "✅ <b>У вас уже активна подписка</b>\n\n"
+                f"Откройте <b>«{BTN_STATUS}»</b>, чтобы посмотреть дату окончания.",
+                parse_mode="html",
                 reply_markup=await create_menu_button()
             )
 
         kb = types.InlineKeyboardMarkup(row_width=1)
         kb.add(
-            types.InlineKeyboardButton(
-                f"⭐ 1 месяц — {PLAN_MONTH_PRICE}⭐ ({PLAN_MONTH_DAYS} дней)",
-                callback_data="buy:month"
-            ),
-            types.InlineKeyboardButton(
-                f"⭐ 1 год — {PLAN_YEAR_PRICE}⭐ ({PLAN_YEAR_DAYS} дней)",
-                callback_data="buy:year"
-            ),
+            types.InlineKeyboardButton(f" 30 дней • {PLAN_30_PRICE}⭐", callback_data="buy:30"),
+            types.InlineKeyboardButton(f" 180 дней • {PLAN_180_PRICE}⭐", callback_data="buy:180"),
+            types.InlineKeyboardButton(f" 360 дней • {PLAN_360_PRICE}⭐", callback_data="buy:360"),
         )
 
         await message.answer(
-            "⭐ <b>Выберите подписку</b>\n\n"
-            f"• <b>1 месяц</b>: {PLAN_MONTH_PRICE}⭐ ({PLAN_MONTH_DAYS} дней)\n"
-            f"• <b>1 год</b>: {PLAN_YEAR_PRICE}⭐ ({PLAN_YEAR_DAYS} дней)\n\n"
-            "Нажмите кнопку ниже — откроется инвойс 👇",
+            "⭐ <b>Выберите тариф</b>\n\n"
+            f" <b>30 дней</b> — {PLAN_30_PRICE}⭐\n"
+            "\n"
+            f" <b>180 дней</b> — {PLAN_180_PRICE}⭐\n"
+            "\n"
+            f" <b>360 дней</b> — {PLAN_360_PRICE}⭐\n"
+            "\n"
+            "Нажмите кнопку ниже 👇",
             parse_mode="html",
             reply_markup=kb
         )
@@ -568,7 +637,7 @@ def build_bot():
         chat_id = callback_query.from_user.id
         plan = callback_query.data.split(":", 1)[1].strip()
 
-        if plan not in ("month", "year"):
+        if plan not in ("30", "180", "360"):
             try:
                 await callback_query.answer("Неверный тариф", show_alert=True)
             except Exception:
@@ -597,13 +666,17 @@ def build_bot():
         currency = getattr(sp, "currency", None)
         inv_payload = getattr(sp, "invoice_payload", None) or ""
 
-        # payload: sub:<plan>:<chat_id>
-        plan = "year"
+        plan = "360"
         parts = inv_payload.split(":")
         if len(parts) >= 2 and parts[0] == "sub":
             plan = parts[1]
 
-        days = PLAN_MONTH_DAYS if plan == "month" else PLAN_YEAR_DAYS
+        if plan == "30":
+            days = PLAN_30_DAYS
+        elif plan == "180":
+            days = PLAN_180_DAYS
+        else:
+            days = PLAN_360_DAYS
 
         await db_log_payment_event(
             chat_id,
@@ -618,14 +691,12 @@ def build_bot():
         until = await db_get_subscribed_until(chat_id)
 
         await message.answer(
-            "✅ <b>Оплата успешна!</b>\n"
+            "✅ <b>Оплата прошла успешно</b>\n\n"
             f"⭐ Подписка активирована до: <b>{fmt_dt(until)}</b>\n\n"
             "Теперь доступ открыт полностью.",
             parse_mode="html",
             reply_markup=await create_menu_button()
         )
-
-    # ================== ADMIN ==================
 
     @dp.message_handler(commands=["block"], user_id=ADMIN_ID)
     async def block_user(message: types.Message):
@@ -695,8 +766,6 @@ def build_bot():
         else:
             await message.answer("У вас нет прав для отправки сообщений.")
 
-    # ================== registration ==================
-
     @dp.message_handler(commands=["delete_registration"])
     async def delete_registration(message: types.Message):
         chat_id = message.chat.id
@@ -740,9 +809,12 @@ def build_bot():
         await state.finish()
         await bot.send_message(
             chat_id,
-            "✅ Регистрация успешно завершена!\n\n"
-            "Введите модель стекла (EN) или откройте меню.\n\n"
-            f"⭐ Подписка: /subscribe или кнопка «{BTN_SUB}»",
+            "✅ <b>Регистрация завершена</b>\n\n"
+            "Теперь вам доступны:\n"
+            "• поиск по модели\n"
+            "• подбор по размеру\n\n"
+            "Введите модель стекла или выберите действие ниже 👇",
+            parse_mode="html",
             reply_markup=await create_menu_button()
         )
 
@@ -754,17 +826,19 @@ def build_bot():
             user_name, user_city, user_phone = info
             await bot.send_message(
                 chat_id,
-                f"✅ Вы зарегистрированы!\n"
-                f"Имя: {user_name}\n"
-                f"Город: {user_city}\n"
-                f"Телефон: {user_phone}\n\n"
-                f"Удалить данные: /delete_registration\n"
-                f"Подписка: /subscribe\n"
-                f"Статус: /status",
+                f"✅ <b>Вы зарегистрированы</b>\n\n"
+                f"👤 Имя: {user_name}\n"
+                f"🏙 Город: {user_city}\n"
+                f"📞 Телефон: {user_phone}\n\n"
+                "Команды:\n"
+                "• /delete_registration\n"
+                "• /subscribe\n"
+                "• /status",
+                parse_mode="html",
                 reply_markup=await create_menu_button()
             )
         else:
-            await bot.send_message(chat_id, "Здравствуйте!\nВведите свое имя для регистрации:")
+            await bot.send_message(chat_id, "👤 Введите своё имя для регистрации:")
             await UserRegistration.name.set()
 
     @dp.message_handler(lambda message: message.text == BTN_REG)
@@ -777,20 +851,20 @@ def build_bot():
             user_name, user_city, user_phone = info
             await bot.send_message(
                 chat_id,
-                f"✅ Вы зарегистрированы!\n"
-                f"Имя: {user_name}\n"
-                f"Город: {user_city}\n"
-                f"Телефон: {user_phone}\n\n"
-                f"Удалить данные: /delete_registration\n"
-                f"Подписка: /subscribe\n"
-                f"Статус: /status",
+                f"✅ <b>Вы зарегистрированы</b>\n\n"
+                f"👤 Имя: {user_name}\n"
+                f"🏙 Город: {user_city}\n"
+                f"📞 Телефон: {user_phone}\n\n"
+                "Команды:\n"
+                "• /delete_registration\n"
+                "• /subscribe\n"
+                "• /status",
+                parse_mode="html",
                 reply_markup=await create_menu_button()
             )
         else:
-            await bot.send_message(chat_id, "Здравствуйте!\nВведите свое имя для регистрации:")
+            await bot.send_message(chat_id, "👤 Введите своё имя для регистрации:")
             await UserRegistration.name.set()
-
-    # ================== start/info ==================
 
     @dp.message_handler(commands=["start"])
     async def start_cmd(message: types.Message):
@@ -799,69 +873,35 @@ def build_bot():
         await db_ensure_user_exists(chat_id)
 
         info = await db_get_user_info(chat_id)
-        if info:
-            await send_message_with_ad(
-                bot,
-                chat_id,
-                f"Привет👋, @{message.from_user.username}!\n"
-                "Введите модель стекла (EN) или используйте меню.\n\n"
-                f"⭐ Подписка: /subscribe • 📅 Статус: /status",
-                reply_markup=await create_menu_button()
-            )
-        else:
-            await send_message_with_ad(
-                bot,
-                chat_id,
-                "Это бот для поиска взаимозаменяемых стекол.\n"
-                "Для пользования ботом зарегистрируйтесь: /registration\n\n"
-                f"⭐ Подписка: /subscribe • 📅 Статус: /status",
-                reply_markup=await create_menu_button()
-            )
-
-    @dp.message_handler(lambda message: message.text == BTN_START)
-    async def start_button_handler(message: types.Message):
-        chat_id = message.chat.id
-        await db_save_message(chat_id, message.text)
-
-        info = await db_get_user_info(chat_id)
-        if info:
-            await bot.send_message(
-                chat_id,
-                f"Привет👋, @{message.from_user.username}\n"
-                "Введите модель стекла (EN) или используйте меню.\n\n"
-                f"⭐ Подписка: /subscribe • 📅 Статус: /status",
-                reply_markup=await create_menu_button()
-            )
-        else:
-            await bot.send_message(
-                chat_id,
-                "Это бот для поиска взаимозаменяемых стекол.\n"
-                "Для пользования ботом зарегистрируйтесь: /registration\n\n"
-                f"⭐ Подписка: /subscribe • 📅 Статус: /status",
-                reply_markup=await create_menu_button()
-            )
+        await send_welcome(
+            bot=bot,
+            chat_id=chat_id,
+            username=getattr(message.from_user, "username", None),
+            registered=bool(info),
+        )
 
     @dp.message_handler(commands=["info"])
     async def handle_info(message: types.Message):
         await db_save_message(message.chat.id, message.text)
 
         info_text = (
-            "🤖 <b>О боте</b>\n"
+            "🤖 <b>О боте</b>\n\n"
             "Этот бот помогает быстро находить взаимозаменяемые стёкла для переклейки.\n\n"
             "💳 <b>Почему бот стал платным?</b>\n"
-            "База постоянно пополняется, хранение/хостинг и поддержка требуют затрат.\n"
+            "База постоянно пополняется, хранение, хостинг и поддержка требуют затрат.\n"
             "Чтобы проект развивался, введена подписка ⭐.\n\n"
             "⭐ <b>Тарифы:</b>\n"
-            f"• <b>1 месяц</b>: {PLAN_MONTH_PRICE}⭐ ({PLAN_MONTH_DAYS} дней)\n"
-            f"• <b>1 год</b>: {PLAN_YEAR_PRICE}⭐ ({PLAN_YEAR_DAYS} дней)\n\n"
+            f"🟢 <b>30 дней</b> — {PLAN_30_PRICE}⭐\n"
+            f"🟠 <b>180 дней</b> — {PLAN_180_PRICE}⭐\n"
+            f"🔵 <b>360 дней</b> — {PLAN_360_PRICE}⭐\n\n"
             "📌 <b>Команды</b>\n"
-            "• /registration — <code>регистрация</code>\n"
-            "• /delete_registration — <code>удалить свои данные</code>\n"
-            "• /size — <code>подбор стекла по размерам</code>\n"
-            "• /subscribe — <code>оформить подписку ⭐</code>\n"
-            "• /status — <code>статус подписки</code>\n"
-            "• /info — <code>справка</code>\n\n"
-            "🛠 Если нашли ошибку — @expert_glass_lcd\n"
+            "• /registration — регистрация\n"
+            "• /delete_registration — удалить свои данные\n"
+            "• /size — подбор стекла по размерам\n"
+            "• /subscribe — оформить подписку ⭐\n"
+            "• /status — статус подписки\n"
+            "• /info — справка\n\n"
+            "🛠 Если нашли ошибку — @expert_glass_lcd"
         )
 
         await bot.send_message(
@@ -877,17 +917,15 @@ def build_bot():
         await db_save_message(message.chat.id, message.text)
         await handle_info(message)
 
-    # ================== /size ==================
-
     @dp.message_handler(commands=["size"])
     async def size_cmd(message: types.Message):
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         kb.row(types.KeyboardButton(BTN_SIZE, web_app=types.WebAppInfo(url=add_src(config.WEBAPP_URL, "cmd"))))
         kb.row(types.KeyboardButton(BTN_MENU))
         await message.answer(
-            "🔎 <b>Подбор стекла по размерам</b>\n\n"
-            f"Нажмите кнопку 👇 «{BTN_SIZE}».\n\n"
-            f"Если передумали — нажмите «{BTN_MENU}».",
+            "📏 <b>Подбор стекла по размерам</b>\n\n"
+            f"Нажмите кнопку <b>«{BTN_SIZE}»</b>.\n\n"
+            f"Если передумали — нажмите <b>«{BTN_MENU}»</b>.",
             parse_mode="html",
             reply_markup=kb
         )
@@ -903,7 +941,7 @@ def build_bot():
         if not info:
             await bot.send_message(
                 chat_id,
-                "Для пользования ботом зарегистрируйтесь: /registration",
+                "Для пользования ботом сначала зарегистрируйтесь: /registration",
                 reply_markup=await create_menu_button(),
             )
             return
@@ -916,7 +954,9 @@ def build_bot():
         except Exception:
             await bot.send_message(
                 chat_id,
-                "Некорректный формат. Введите длину и ширину числами (можно с запятой).",
+                "⚠️ <b>Некорректный формат</b>\n\n"
+                "Введите длину и ширину числами, можно с запятой.",
+                parse_mode="html",
                 reply_markup=await create_menu_button(),
             )
             return
@@ -927,8 +967,9 @@ def build_bot():
         if not found:
             await bot.send_message(
                 chat_id,
-                "🔘По указанным размерам ничего не найдено!\n"
-                "🔘Попробуйте увеличить или уменьшить размер на 0,5мм"
+                "❌ <b>По указанным размерам ничего не найдено</b>\n\n"
+                "Попробуйте увеличить или уменьшить размер на 0.5 мм.",
+                parse_mode="html",
             )
             await bot.send_message(chat_id, "Меню:", reply_markup=await create_menu_button())
             return
@@ -937,17 +978,15 @@ def build_bot():
 
         await bot.send_message(
             chat_id,
-            f"<em><u>Результаты для размеров {height}x{width}</u></em>",
+            f"📏 <b>Результаты для размеров:</b> <code>{height} × {width}</code>",
             parse_mode="HTML"
         )
-
-        dot = pretty_item_prefix()
 
         if subscribed:
             for g in found:
                 model = g.get("model")
                 photo_path = g.get("photo_path")
-                caption = f"{dot} <b>Модель:</b> {model}"
+                caption = f"• <b>Модель:</b> {model}"
                 if photo_path and os.path.exists(photo_path):
                     with open(photo_path, "rb") as photo:
                         await bot.send_photo(chat_id, photo, caption=caption, parse_mode="HTML")
@@ -959,7 +998,7 @@ def build_bot():
                 g = visible[0]
                 model = g.get("model")
                 photo_path = g.get("photo_path")
-                caption = f"{dot} <b>Модель:</b> {model}"
+                caption = f"• <b>Модель:</b> {model}"
                 if photo_path and os.path.exists(photo_path):
                     with open(photo_path, "rb") as photo:
                         await bot.send_photo(chat_id, photo, caption=caption, parse_mode="HTML")
@@ -978,8 +1017,6 @@ def build_bot():
 
         await bot.send_message(chat_id, "Меню:", reply_markup=await create_menu_button())
 
-    # ================== main text ==================
-
     @dp.message_handler()
     async def handle_text(message: types.Message, state: FSMContext):
         user_message = message.text
@@ -997,23 +1034,53 @@ def build_bot():
             return
 
         if "galaxy" in user_message_lower:
-            await bot.send_message(chat_id, "Повторите запрос не используя слово <b>galaxy</b>.", parse_mode="html")
+            await bot.send_message(
+                chat_id,
+                "⚠️ Уберите слово <b>galaxy</b> и повторите запрос.",
+                parse_mode="html"
+            )
             return
+
         if "realmi" in user_message_lower:
-            await bot.send_message(chat_id, "❗️Исправте <u>realmi</u> на <b>realme</b>.", parse_mode="html")
+            await bot.send_message(
+                chat_id,
+                "⚠️ Исправьте <u>realmi</u> на <b>realme</b>.",
+                parse_mode="html"
+            )
             return
+
         if "techno" in user_message_lower:
-            await bot.send_message(chat_id, "❗️Исправте <u>techno</u> на <b>tecno</b>.", parse_mode="html")
+            await bot.send_message(
+                chat_id,
+                "⚠️ Исправьте <u>techno</u> на <b>tecno</b>.",
+                parse_mode="html"
+            )
             return
+
         if "tehno" in user_message_lower:
-            await bot.send_message(chat_id, "❗️Исправте <u>tehno</u> на <b>tecno</b>.", parse_mode="html")
+            await bot.send_message(
+                chat_id,
+                "⚠️ Исправьте <u>tehno</u> на <b>tecno</b>.",
+                parse_mode="html"
+            )
             return
+
         if "+" in user_message_lower:
-            await bot.send_message(chat_id, "❗️Знак <u>+</u> замените на слово <b>plus</b>.", parse_mode="html")
+            await bot.send_message(
+                chat_id,
+                "⚠️ Знак <u>+</u> замените на слово <b>plus</b>.",
+                parse_mode="html"
+            )
             return
 
         if re.search(r"[а-яё]", user_message_lower):
-            await bot.send_message(chat_id, "Пожалуйста, пишите модель на <b>английском</b> языке.", parse_mode="html")
+            await bot.send_message(
+                chat_id,
+                "⚠️ <b>Неверный формат запроса</b>\n\n"
+                "Пожалуйста, введите модель <b>на английском языке</b>.\n"
+                "Например: <code>iphone 11</code>",
+                parse_mode="html"
+            )
             return
 
         if not await db_get_user_info(chat_id):
@@ -1030,128 +1097,89 @@ def build_bot():
         m6 = find_model_in_dataset(user_message_lower, glass_data6)
         m7 = find_model_in_dataset(user_message_lower, glass_data7)
 
-        dot = pretty_item_prefix()
-
-        # уточняющие списки (5 и 7)
         if m5:
             _, found_list = m5
-            response = f"<em>Я знаю многое о продукции<b> {user_message}</b>. Укажите конкретную модель!</em>\n"
+            items, photos = split_items_and_photos(found_list)
+            response = [
+                f"🧩 <b>Нужно уточнение по запросу:</b> <code>{user_message}</code>",
+                "",
+                "Я знаю несколько вариантов. Укажите точную модель:",
+            ]
+            kb = build_photo_keyboard(photos)
+
             if subscribed:
-                kb = types.InlineKeyboardMarkup()
-                photo_btn_idx = 0
-                for item in found_list:
-                    if isinstance(item, str) and item.lower().endswith(".png"):
-                        lbl = alpha_label(photo_btn_idx)
-                        title = "📷 Фото стекла" if not lbl else f"📷 Фото {lbl}"
-                        photo_btn_idx += 1
-                        kb.add(types.InlineKeyboardButton(title, callback_data=f"photo:{item}"))
-                        response += f"\n{dot} <i>Фото стекла — кнопка ниже</i>"
-                    else:
-                        response += f"\n{dot} {item}"
-                await bot.send_message(chat_id, response, parse_mode="html", reply_markup=kb)
+                for item in items:
+                    response.append(f"• {item}")
+
+                if photos:
+                    response.append("")
+
+
+                await bot.send_message(chat_id, "\n".join(response), parse_mode="html", reply_markup=kb)
                 return
 
-            visible, _ = limit_results(found_list, subscribed, limit=1)
-            kb = types.InlineKeyboardMarkup()
+            visible = items[:1]
             if visible:
-                first = visible[0]
-                if isinstance(first, str) and first.lower().endswith(".png"):
-                    kb.add(types.InlineKeyboardButton("📷 Фото стекла", callback_data=f"photo:{first}"))
-                    await bot.send_message(chat_id, response + f"\n{dot} <i>Фото стекла — кнопка ниже</i>", parse_mode="html", reply_markup=kb)
-                else:
-                    await bot.send_message(chat_id, response + f"\n{dot} {first}", parse_mode="html")
+                response.append(f"• {visible[0]}")
 
-            hidden_glasses = count_hidden_glasses(found_list, visible_count=1)
+            hidden_glasses = max(len(items) - len(visible), 0)
+            if photos and visible:
+                response.append("")
+
+
             if hidden_glasses > 0:
-                await bot.send_message(
-                    chat_id,
-                    build_masked_list(hidden_glasses, style="lottery") +
-                    f"\n🔒 <b>Скрыто стекол:</b> {hidden_glasses}\n"
-                    f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»",
-                    parse_mode="html"
-                )
+                response.append("")
+                response.append(build_masked_list(hidden_glasses, style="lottery"))
+                response.append(f"🔒 <b>Скрыто стекол:</b> {hidden_glasses}")
+                response.append(f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»")
+
+            await bot.send_message(chat_id, "\n".join(response), parse_mode="html", reply_markup=kb)
             return
 
         if m7:
             _, found_list = m7
-            response = f"<em>Уточните, какая именно модель<b> {user_message}</b> Вас интересует?</em>\n"
+            items, photos = split_items_and_photos(found_list)
+            response = [
+                f"🧩 <b>Уточните модель по запросу:</b> <code>{user_message}</code>",
+                "",
+                "Выберите более точный вариант:",
+            ]
+            kb = build_photo_keyboard(photos)
+
             if subscribed:
-                kb = types.InlineKeyboardMarkup()
-                photo_btn_idx = 0
-                for item in found_list:
-                    if isinstance(item, str) and item.lower().endswith(".png"):
-                        lbl = alpha_label(photo_btn_idx)
-                        title = "📷 Фото стекла" if not lbl else f"📷 Фото {lbl}"
-                        photo_btn_idx += 1
-                        kb.add(types.InlineKeyboardButton(title, callback_data=f"photo:{item}"))
-                        response += f"\n{dot} <i>Фото стекла — кнопка ниже</i>"
-                    else:
-                        response += f"\n{dot} {item}"
-                await bot.send_message(chat_id, response, parse_mode="html", reply_markup=kb)
+                for item in items:
+                    response.append(f"• {item}")
+
+                if photos:
+                    response.append("")
+
+
+                await bot.send_message(chat_id, "\n".join(response), parse_mode="html", reply_markup=kb)
                 return
 
-            visible, _ = limit_results(found_list, subscribed, limit=1)
-            kb = types.InlineKeyboardMarkup()
+            visible = items[:1]
             if visible:
-                first = visible[0]
-                if isinstance(first, str) and first.lower().endswith(".png"):
-                    kb.add(types.InlineKeyboardButton("📷 Фото стекла", callback_data=f"photo:{first}"))
-                    await bot.send_message(chat_id, response + f"\n{dot} <i>Фото стекла — кнопка ниже</i>", parse_mode="html", reply_markup=kb)
-                else:
-                    await bot.send_message(chat_id, response + f"\n{dot} {first}", parse_mode="html")
+                response.append(f"• {visible[0]}")
 
-            hidden_glasses = count_hidden_glasses(found_list, visible_count=1)
+            hidden_glasses = max(len(items) - len(visible), 0)
+            if photos and visible:
+                response.append("")
+
+
             if hidden_glasses > 0:
-                await bot.send_message(
-                    chat_id,
-                    build_masked_list(hidden_glasses, style="lottery") +
-                    f"\n🔒 <b>Скрыто стекол:</b> {hidden_glasses}\n"
-                    f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»",
-                    parse_mode="html"
-                )
+                response.append("")
+                response.append(build_masked_list(hidden_glasses, style="lottery"))
+                response.append(f"🔒 <b>Скрыто стекол:</b> {hidden_glasses}")
+                response.append(f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»")
+
+            await bot.send_message(chat_id, "\n".join(response), parse_mode="html", reply_markup=kb)
             return
-
-        def build_found_block(found_list: list):
-            keyboard = types.InlineKeyboardMarkup()
-            response = f"<em><u>Взаимозаменяемые стекла по поиску 🔍<b>'{user_message}'</b> найдено:</u></em>\n"
-
-            if subscribed:
-                photo_btn_idx = 0
-                for glass in found_list:
-                    if isinstance(glass, str) and glass.lower().endswith(".png"):
-                        lbl = alpha_label(photo_btn_idx)
-                        title = "📷 Фото стекла" if not lbl else f"📷 Фото {lbl}"
-                        photo_btn_idx += 1
-                        keyboard.add(types.InlineKeyboardButton(title, callback_data=f"photo:{glass}"))
-                        response += f"\n{dot} <i>Фото стекла — кнопка ниже</i>"
-                    else:
-                        response += f"\n{dot} {glass}"
-                return response, keyboard
-
-            visible, _ = limit_results(found_list, subscribed, limit=1)
-            if visible:
-                first = visible[0]
-                if isinstance(first, str) and first.lower().endswith(".png"):
-                    keyboard.add(types.InlineKeyboardButton("📷 Фото стекла", callback_data=f"photo:{first}"))
-                    response += f"\n{dot} <i>Фото стекла — кнопка ниже</i>"
-                else:
-                    response += f"\n{dot} {first}"
-
-            hidden_glasses = count_hidden_glasses(found_list, visible_count=1)
-            if hidden_glasses > 0:
-                response += "\n" + build_masked_list(hidden_glasses, style="lottery")
-                response += (
-                    f"\n🔒 <b>Скрыто стекол:</b> {hidden_glasses}\n"
-                    f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»"
-                )
-
-            return response, keyboard
 
         sent_any_results = False
         for m in (m1, m2, m3, m4, m6):
             if m:
                 _, lst = m
-                resp, kb = build_found_block(lst)
+                resp, kb = format_found_response(user_message, lst, subscribed)
                 await bot.send_message(chat_id, resp, reply_markup=kb, parse_mode="html")
                 sent_any_results = True
 
@@ -1161,17 +1189,16 @@ def build_bot():
 
         await bot.send_message(
             chat_id,
-            "<em><b>По Вашему запросу ничего не найдено!</b>\n\n"
-            "1️⃣ Проверьте ошибки.\n"
-            "2️⃣ Попробуйте полное название.\n\n"
-            "🔎 <b>Можно подобрать по размерам</b>\n"
-            f"«{BTN_SIZE}» или /size</em>\n\n"
-            f"⭐ Подписка: /subscribe • 📅 Статус: /status",
+            "❌ <b>Ничего не найдено</b>\n\n"
+            "Проверьте:\n"
+            "• правильность написания\n"
+            "• полное название модели\n"
+            "• английскую раскладку\n\n"
+            f"Также можно использовать <b>«{BTN_SIZE}»</b> или команду /size",
             parse_mode="html",
             reply_markup=await create_menu_button(),
         )
 
-    # ================== PHOTO CALLBACK ==================
     @dp.callback_query_handler(lambda query: query.data and query.data.startswith("photo:"))
     async def process_photo_callback(callback_query: types.CallbackQuery):
         photo_name = callback_query.data.split(":", 1)[1]
