@@ -79,11 +79,11 @@ belarusian_cities = [
 ]
 BEL_CITIES_SET = set([c.lower() for c in belarusian_cities])
 
-AD_TEXT = (
-    "📢 <b>Наши ресурсы</b>\n\n"
-    '💬 Чат: <a href="https://t.me/+yJDx_G2b0hNjNTBi">tehnosfera_chat</a>\n'
-    '📰 Канал: <a href="https://t.me/+ze8-aO_YZ-Q0ZGEy">tehnosfera_info</a>'
-)
+# AD_TEXT = (
+#     "📢 <b>Наши ресурсы</b>\n\n"
+#     '💬 Чат: <a href="https://t.me/+yJDx_G2b0hNjNTBi">tehnosfera_chat</a>\n'
+#     '📰 Канал: <a href="https://t.me/+ze8-aO_YZ-Q0ZGEy">tehnosfera_info</a>'
+# )
 
 SKIP_LOG_TEXTS = {
     "/start",
@@ -101,6 +101,20 @@ BTN_MENU = "↩️ Назад в меню"
 
 def add_src(url: str, src: str) -> str:
     return f"{url}&src={src}" if "?" in url else f"{url}?src={src}"
+
+
+def is_private_chat(message: types.Message) -> bool:
+    return bool(message and message.chat and message.chat.type == "private")
+
+
+async def reject_non_private(message: types.Message, text: str = "❌ Бот работает только в личных сообщениях.") -> bool:
+    if is_private_chat(message):
+        return False
+    try:
+        await message.answer(text)
+    except Exception:
+        pass
+    return True
 
 
 @sync_to_async(thread_sensitive=True)
@@ -280,7 +294,6 @@ async def send_welcome(bot: Bot, chat_id: int, username: str | None, registered:
             "Что можно сделать:\n"
             "• найти стекло по модели\n"
             "• подобрать по размерам\n"
-
         )
     else:
         text = (
@@ -433,14 +446,13 @@ def split_items_and_photos(found_list: list) -> tuple[list[str], list[str]]:
 
 def format_found_response(user_message: str, found_list: list, subscribed: bool) -> tuple[str, types.InlineKeyboardMarkup]:
     items, photos = split_items_and_photos(found_list)
-    keyboard = build_photo_keyboard(photos)
 
-    lines = [
-        f"<em><u>Взаимозаменяемые стекла по поиску 🔍<b>'{user_message}'</b> найдено:\n</u></em>",
-    ]
-
-    # ===== ЕСЛИ ЕСТЬ ПОДПИСКА =====
     if subscribed:
+        keyboard = build_photo_keyboard(photos)
+        lines = [
+            f"<em><u>Взаимозаменяемые стекла по поиску 🔍<b>'{user_message}'</b> найдено:</u></em>"
+        ]
+
         if items:
             for item in items:
                 lines.append(f"• {item}")
@@ -449,22 +461,22 @@ def format_found_response(user_message: str, found_list: list, subscribed: bool)
 
         return "\n".join(lines), keyboard
 
-    # ===== ЕСЛИ НЕТ ПОДПИСКИ =====
-    visible_items = items[:1]
+    # без подписки скрываем ВСЁ
+    keyboard = types.InlineKeyboardMarkup()
+    hidden_glasses = len(items)
 
-    if visible_items:
-        lines.append(f"• {visible_items[0]}")
+    lines = [
+        f"<em><u>Взаимозаменяемые стекла по поиску 🔍<b>'{user_message}'</b> найдено:</u></em>"
+    ]
 
-    hidden_glasses = max(len(items) - 1, 0)
-
-    # 👉 СРАЗУ БЕЗ ПУСТЫХ СТРОК
     if hidden_glasses > 0:
         lines.append(build_masked_list(hidden_glasses, style="lottery"))
-        lines.append(f"\n🔒 <b>Скрыто стекол:</b> {hidden_glasses}\n")
-        lines.append(f"⭐ Откройте всё: /subscribe\n или кнопка «{BTN_SUB}»")
+        lines.append(f"🔒 <b>Скрыто стекол:</b> {hidden_glasses}")
+        lines.append(f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»")
+    else:
+        lines.append("Ничего не найдено.")
 
     return "\n".join(lines), keyboard
-
 
 
 async def send_updates_to_all_users_rb(bot_instance, message_text):
@@ -541,6 +553,9 @@ def build_bot():
 
     @dp.message_handler(commands=["status"])
     async def status_cmd(message: types.Message):
+        if await reject_non_private(message):
+            return
+
         chat_id = message.chat.id
         await db_ensure_user_exists(chat_id)
         await db_save_message(chat_id, "/status")
@@ -548,6 +563,9 @@ def build_bot():
 
     @dp.message_handler(lambda m: m.text == BTN_STATUS)
     async def status_button(message: types.Message):
+        if await reject_non_private(message):
+            return
+
         chat_id = message.chat.id
         await db_ensure_user_exists(chat_id)
         await db_save_message(chat_id, BTN_STATUS)
@@ -587,6 +605,9 @@ def build_bot():
 
     @dp.message_handler(commands=["subscribe"])
     async def subscribe_cmd(message: types.Message):
+        if await reject_non_private(message, "❌ Подписка доступна только в личных сообщениях с ботом."):
+            return
+
         chat_id = message.chat.id
         await db_ensure_user_exists(chat_id)
 
@@ -609,19 +630,16 @@ def build_bot():
 
         kb = types.InlineKeyboardMarkup(row_width=1)
         kb.add(
-            types.InlineKeyboardButton(f" 30 дней • {PLAN_30_PRICE}⭐", callback_data="buy:30"),
-            types.InlineKeyboardButton(f" 180 дней • {PLAN_180_PRICE}⭐", callback_data="buy:180"),
-            types.InlineKeyboardButton(f" 360 дней • {PLAN_360_PRICE}⭐", callback_data="buy:360"),
+            types.InlineKeyboardButton(f"30 дней • {PLAN_30_PRICE}⭐", callback_data="buy:30"),
+            types.InlineKeyboardButton(f"180 дней • {PLAN_180_PRICE}⭐", callback_data="buy:180"),
+            types.InlineKeyboardButton(f"360 дней • {PLAN_360_PRICE}⭐", callback_data="buy:360"),
         )
 
         await message.answer(
             "⭐ <b>Выберите тариф</b>\n\n"
-            f" <b>30 дней</b> — {PLAN_30_PRICE}⭐\n"
-            "\n"
-            f" <b>180 дней</b> — {PLAN_180_PRICE}⭐\n"
-            "\n"
-            f" <b>360 дней</b> — {PLAN_360_PRICE}⭐\n"
-            "\n"
+            f"<b>30 дней</b> — {PLAN_30_PRICE}⭐\n\n"
+            f"<b>180 дней</b> — {PLAN_180_PRICE}⭐\n\n"
+            f"<b>360 дней</b> — {PLAN_360_PRICE}⭐\n\n"
             "Нажмите кнопку ниже 👇",
             parse_mode="html",
             reply_markup=kb
@@ -629,11 +647,20 @@ def build_bot():
 
     @dp.message_handler(lambda m: m.text == BTN_SUB)
     async def subscribe_button(message: types.Message):
+        if await reject_non_private(message, "❌ Подписка доступна только в личных сообщениях с ботом."):
+            return
         await db_save_message(message.chat.id, BTN_SUB)
         await subscribe_cmd(message)
 
     @dp.callback_query_handler(lambda q: q.data and q.data.startswith("buy:"))
     async def buy_plan_callback(callback_query: types.CallbackQuery):
+        if callback_query.message and callback_query.message.chat.type != "private":
+            try:
+                await callback_query.answer("Оплата доступна только в личке с ботом.", show_alert=True)
+            except Exception:
+                pass
+            return
+
         chat_id = callback_query.from_user.id
         plan = callback_query.data.split(":", 1)[1].strip()
 
@@ -658,6 +685,9 @@ def build_bot():
 
     @dp.message_handler(content_types=types.ContentType.SUCCESSFUL_PAYMENT)
     async def successful_payment(message: types.Message):
+        if await reject_non_private(message, "❌ Оплата обрабатывается только в личных сообщениях."):
+            return
+
         sp = message.successful_payment
         chat_id = message.chat.id
 
@@ -768,12 +798,18 @@ def build_bot():
 
     @dp.message_handler(commands=["delete_registration"])
     async def delete_registration(message: types.Message):
+        if await reject_non_private(message, "❌ Регистрация доступна только в личных сообщениях."):
+            return
+
         chat_id = message.chat.id
         await db_user_delete(chat_id)
         await bot.send_message(chat_id, "Ваши регистрационные данные успешно удалены. Для повторной регистрации используйте /registration")
 
     @dp.message_handler(state=UserRegistration.name)
     async def register_name(message: types.Message, state: FSMContext):
+        if await reject_non_private(message, "❌ Регистрация доступна только в личных сообщениях."):
+            return
+
         chat_id = message.chat.id
         name = message.text
         await state.update_data(name=name)
@@ -782,10 +818,15 @@ def build_bot():
 
     @dp.message_handler(lambda message: message.text.isdigit(), state=UserRegistration.city)
     async def register_invalid_city(message: types.Message):
+        if await reject_non_private(message, "❌ Регистрация доступна только в личных сообщениях."):
+            return
         await bot.send_message(message.chat.id, "Некорректно введен город!")
 
     @dp.message_handler(state=UserRegistration.city)
     async def register_city(message: types.Message, state: FSMContext):
+        if await reject_non_private(message, "❌ Регистрация доступна только в личных сообщениях."):
+            return
+
         chat_id = message.chat.id
         city = message.text
         await state.update_data(city=city)
@@ -794,10 +835,15 @@ def build_bot():
 
     @dp.message_handler(lambda message: not message.text.isdigit(), state=UserRegistration.phone_number)
     async def register_invalid_phone(message: types.Message):
+        if await reject_non_private(message, "❌ Регистрация доступна только в личных сообщениях."):
+            return
         await bot.send_message(message.chat.id, "Номер телефона должен содержать только цифры. Введите корректный номер телефона.")
 
     @dp.message_handler(lambda message: message.text.isdigit(), state=UserRegistration.phone_number)
     async def register_phone_number(message: types.Message, state: FSMContext):
+        if await reject_non_private(message, "❌ Регистрация доступна только в личных сообщениях."):
+            return
+
         chat_id = message.chat.id
         phone_number = message.text
         user_data = await state.get_data()
@@ -820,6 +866,9 @@ def build_bot():
 
     @dp.message_handler(commands=["registration"])
     async def registration_cmd(message: types.Message, state: FSMContext):
+        if await reject_non_private(message, "❌ Регистрация доступна только в личных сообщениях."):
+            return
+
         chat_id = message.chat.id
         info = await db_get_user_info(chat_id)
         if info:
@@ -843,6 +892,9 @@ def build_bot():
 
     @dp.message_handler(lambda message: message.text == BTN_REG)
     async def registration_button_handler(message: types.Message, state: FSMContext):
+        if await reject_non_private(message, "❌ Регистрация доступна только в личных сообщениях."):
+            return
+
         chat_id = message.chat.id
         await db_save_message(chat_id, message.text)
 
@@ -868,6 +920,9 @@ def build_bot():
 
     @dp.message_handler(commands=["start"])
     async def start_cmd(message: types.Message):
+        if await reject_non_private(message):
+            return
+
         chat_id = message.chat.id
         await db_save_message(chat_id, message.text)
         await db_ensure_user_exists(chat_id)
@@ -882,6 +937,9 @@ def build_bot():
 
     @dp.message_handler(commands=["info"])
     async def handle_info(message: types.Message):
+        if await reject_non_private(message):
+            return
+
         await db_save_message(message.chat.id, message.text)
 
         info_text = (
@@ -914,11 +972,16 @@ def build_bot():
 
     @dp.message_handler(lambda message: message.text == BTN_INFO)
     async def info_button_handler(message: types.Message):
+        if await reject_non_private(message):
+            return
         await db_save_message(message.chat.id, message.text)
         await handle_info(message)
 
     @dp.message_handler(commands=["size"])
     async def size_cmd(message: types.Message):
+        if await reject_non_private(message, "❌ Подбор по размеру работает только в личных сообщениях."):
+            return
+
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         kb.row(types.KeyboardButton(BTN_SIZE, web_app=types.WebAppInfo(url=add_src(config.WEBAPP_URL, "cmd"))))
         kb.row(types.KeyboardButton(BTN_MENU))
@@ -932,10 +995,15 @@ def build_bot():
 
     @dp.message_handler(lambda m: m.text == BTN_MENU)
     async def back_to_menu(message: types.Message):
+        if await reject_non_private(message):
+            return
         await message.answer("Меню:", reply_markup=await create_menu_button())
 
     @dp.message_handler(content_types=types.ContentType.WEB_APP_DATA)
     async def handle_size_webapp(message: types.Message, state: FSMContext):
+        if not is_private_chat(message):
+            return
+
         chat_id = message.chat.id
         info = await db_get_user_info(chat_id)
         if not info:
@@ -993,32 +1061,22 @@ def build_bot():
                 else:
                     await bot.send_message(chat_id, caption, parse_mode="HTML")
         else:
-            visible, _ = limit_results(found, subscribed, limit=1)
-            if visible:
-                g = visible[0]
-                model = g.get("model")
-                photo_path = g.get("photo_path")
-                caption = f"• <b>Модель:</b> {model}"
-                if photo_path and os.path.exists(photo_path):
-                    with open(photo_path, "rb") as photo:
-                        await bot.send_photo(chat_id, photo, caption=caption, parse_mode="HTML")
-                else:
-                    await bot.send_message(chat_id, caption, parse_mode="HTML")
-
-            hidden_count = max(len(found) - 1, 0)
-            if hidden_count > 0:
-                await bot.send_message(
-                    chat_id,
-                    build_masked_list(hidden_count, style="lottery") +
-                    f"\n🔒 <b>Скрыто стекол:</b> {hidden_count}\n"
-                    f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»",
-                    parse_mode="html"
-                )
+            hidden_count = len(found)
+            await bot.send_message(
+                chat_id,
+                build_masked_list(hidden_count, style="lottery") +
+                f"\n🔒 <b>Скрыто стекол:</b> {hidden_count}\n"
+                f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»",
+                parse_mode="html"
+            )
 
         await bot.send_message(chat_id, "Меню:", reply_markup=await create_menu_button())
 
     @dp.message_handler()
     async def handle_text(message: types.Message, state: FSMContext):
+        if not is_private_chat(message):
+            return
+
         user_message = message.text
         if not user_message:
             return
@@ -1100,35 +1158,23 @@ def build_bot():
         if m5:
             _, found_list = m5
             items, photos = split_items_and_photos(found_list)
+
             response = [
                 f"🧩 <b>Нужно уточнение по запросу:</b> <code>{user_message}</code>",
                 "",
                 "Я знаю несколько вариантов. Укажите точную модель:",
             ]
-            kb = build_photo_keyboard(photos)
 
             if subscribed:
+                kb = build_photo_keyboard(photos)
                 for item in items:
                     response.append(f"• {item}")
-
-                if photos:
-                    response.append("")
-
-
                 await bot.send_message(chat_id, "\n".join(response), parse_mode="html", reply_markup=kb)
                 return
 
-            visible = items[:1]
-            if visible:
-                response.append(f"• {visible[0]}")
-
-            hidden_glasses = max(len(items) - len(visible), 0)
-            if photos and visible:
-                response.append("")
-
-
+            kb = types.InlineKeyboardMarkup()
+            hidden_glasses = len(items)
             if hidden_glasses > 0:
-                response.append("")
                 response.append(build_masked_list(hidden_glasses, style="lottery"))
                 response.append(f"🔒 <b>Скрыто стекол:</b> {hidden_glasses}")
                 response.append(f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»")
@@ -1139,35 +1185,23 @@ def build_bot():
         if m7:
             _, found_list = m7
             items, photos = split_items_and_photos(found_list)
+
             response = [
                 f"🧩 <b>Уточните модель по запросу:</b> <code>{user_message}</code>",
                 "",
                 "Выберите более точный вариант:",
             ]
-            kb = build_photo_keyboard(photos)
 
             if subscribed:
+                kb = build_photo_keyboard(photos)
                 for item in items:
                     response.append(f"• {item}")
-
-                if photos:
-                    response.append("")
-
-
                 await bot.send_message(chat_id, "\n".join(response), parse_mode="html", reply_markup=kb)
                 return
 
-            visible = items[:1]
-            if visible:
-                response.append(f"• {visible[0]}")
-
-            hidden_glasses = max(len(items) - len(visible), 0)
-            if photos and visible:
-                response.append("")
-
-
+            kb = types.InlineKeyboardMarkup()
+            hidden_glasses = len(items)
             if hidden_glasses > 0:
-                response.append("")
                 response.append(build_masked_list(hidden_glasses, style="lottery"))
                 response.append(f"🔒 <b>Скрыто стекол:</b> {hidden_glasses}")
                 response.append(f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»")
@@ -1201,6 +1235,13 @@ def build_bot():
 
     @dp.callback_query_handler(lambda query: query.data and query.data.startswith("photo:"))
     async def process_photo_callback(callback_query: types.CallbackQuery):
+        if callback_query.message and callback_query.message.chat.type != "private":
+            try:
+                await callback_query.answer("Бот работает только в личных сообщениях.", show_alert=True)
+            except Exception:
+                pass
+            return
+
         photo_name = callback_query.data.split(":", 1)[1]
         possible_paths = [f"photos1/{photo_name}", f"photos/{photo_name}", photo_name]
         photo_path = next((p for p in possible_paths if os.path.exists(p)), None)
