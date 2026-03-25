@@ -2276,6 +2276,16 @@ glass_data = [
     ("Xiaomi 15ultra", ["Xiaomi 15 Pro", "Xiaomi 15 Ultra", "<b>Display: Soft OLED</b>"]),
     ("15 ultra", ["Xiaomi 15 Pro", "Xiaomi 15 Ultra", "<b>Display: Soft OLED</b>"]),
 
+    ("Xiaomi 15t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
+    ("Xiaomi 15tpro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
+    ("15t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
+    ("Xiaomi 15 t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
+    ("15tpro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
+    ("15 t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
+    ("Xiaomi 15t", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
+    ("Xiaomi 15 t", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
+    ("15t", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
+    ("15 t", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
 
 
     ("Xiaomi redmi note 12 pro", ["Xiaomi Redmi Note 12 Pro 5G", "Xiaomi Poco X5 Pro 5G", "Xiaomi Redmi Note 12 Pro Plus", "<b>Display: Soft OLED</b>", "redmi note 12 pro.png"]),
@@ -3339,6 +3349,11 @@ glass_data = [
     ("nova y72", ["Honor X7", "Honor X7a", "Honor X7a Plus", "Huawei Nova Y70", "Huawei Nova Y70 Plus", "Huawei Nova Y72", "<b>Display: IPS</b>", "honor x7.png"]),
     ("Huawei y72", ["Honor X7", "Honor X7a", "Honor X7a Plus", "Huawei Nova Y70", "Huawei Nova Y70 Plus", "Huawei Nova Y72", "<b>Display: IPS</b>", "honor x7.png"]),
     ("mga-lx3", ["Honor X7", "Honor X7a", "Honor X7a Plus", "Huawei Nova Y70", "Huawei Nova Y70 Plus", "Huawei Nova Y72", "<b>Display: IPS</b>", "honor x7.png"]),
+
+    ("Honor X5c", ["<b>Можно поставить,\n по ширене вплотную.</b>", "Honor X7", "Honor X7a", "Honor X7a Plus", "Huawei Nova Y70", "Huawei Nova Y70 Plus", "Huawei Nova Y72", "<b>Display: IPS</b>"]),
+    ("X5c", ["<b>Можно поставить,\n по ширене вплотную.</b>", "Honor X7", "Honor X7a", "Honor X7a Plus", "Huawei Nova Y70", "Huawei Nova Y70 Plus", "Huawei Nova Y72", "<b>Display: IPS</b>"]),
+    ("Honor X5 c", ["<b>Можно поставить,\n по ширене вплотную.</b>", "Honor X7", "Honor X7a", "Honor X7a Plus", "Huawei Nova Y70", "Huawei Nova Y70 Plus", "Huawei Nova Y72", "<b>Display: IPS</b>"]),
+    ("X5 c", ["<b>Можно поставить,\n по ширене вплотную.</b>", "Honor X7", "Honor X7a", "Honor X7a Plus", "Huawei Nova Y70", "Huawei Nova Y70 Plus", "Huawei Nova Y72", "<b>Display: IPS</b>"]),
 
 
 
