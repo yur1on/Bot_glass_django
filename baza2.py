@@ -454,6 +454,12 @@ glass_data9 = [
 
     {"model": "<b>Tecno Spark Go-2024 / Tecno Spark Go / Tecno Spark 20 / Tecno Spark 20C / Tecno Pop 8 / Infinix Smart 8 / Infinix Smart 8 HD / Infinix Smart 8 Pro / Infinix Smart 8 Plus / Infinix Hot 40i / Itel P55 / Itel P55 Plus / Itel P55T / Itel P55 5G / Itel Power 50 / Itel RS4 / Itel 24L / tel A70S / Itel S24</b>", "height": 160, "width": 72, "photo_path": "photos/Infinix hot 40i.png"},
 
+    {"model": "<b>Tecno Spark 30 4G / Infinix Hot 50 4G</b> \nточные размеры 164.27 x 72,64", "height": 164.5, "width": 72.5},
+
+    {"model": "<b>Xiaomi 17T Pro</b>", "height": 160, "width": 75},
+
+    {"model": "<b>Poco F7</b> \nточные размеры 160.8 x 75,6", "height": 161, "width": 75.5},
+
     {"model": "<b>Samsung a15 / Samsung a25 / Samsung M15 </b>", "height": 156, "width": 73, "photo_path": "photos/samsung a15.png"},
 
     {"model": "<b>Samsung a35 / Samsung a55</b>", "height": 159, "width": 75, "photo_path": "photos/samsung a35.png"},

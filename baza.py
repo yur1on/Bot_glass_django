@@ -2527,6 +2527,10 @@ glass_data = [
     ("Poco F7Pro", ["Xiaomi Poco F7 Pro", "Xiaomi Poco F7 Ultra", "<b>Display: Soft OLED</b>"]),
     ("F7 Pro", ["Xiaomi Poco F7 Pro", "Xiaomi Poco F7 Ultra", "<b>Display: Soft OLED</b>"]),
     ("F7Pro", ["Xiaomi Poco F7 Pro", "Xiaomi Poco F7 Ultra", "<b>Display: Soft OLED</b>"]),
+    ("Xiaomi Poco F7 Ultra", ["Xiaomi Poco F7 Pro", "Xiaomi Poco F7 Ultra", "<b>Display: Soft OLED</b>"]),
+    ("Poco F7 Ultra", ["Xiaomi Poco F7 Pro", "Xiaomi Poco F7 Ultra", "<b>Display: Soft OLED</b>"]),
+    ("F7 Ultra", ["Xiaomi Poco F7 Pro", "Xiaomi Poco F7 Ultra", "<b>Display: Soft OLED</b>"]),
+
 
     ("Xiaomi Poco F7", ["Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
     ("Poco F7", ["Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
