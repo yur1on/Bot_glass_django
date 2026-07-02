@@ -2276,16 +2276,19 @@ glass_data = [
     ("Xiaomi 15ultra", ["Xiaomi 15 Pro", "Xiaomi 15 Ultra", "<b>Display: Soft OLED</b>"]),
     ("15 ultra", ["Xiaomi 15 Pro", "Xiaomi 15 Ultra", "<b>Display: Soft OLED</b>"]),
 
-    ("Xiaomi 15t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
-    ("Xiaomi 15tpro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
-    ("15t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
-    ("Xiaomi 15 t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
-    ("15tpro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
-    ("15 t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
-    ("Xiaomi 15t", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
-    ("Xiaomi 15 t", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
-    ("15t", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
-    ("15 t", ["Xiaomi 15t", "Xiaomi 15t Pro", "<b>Display: Soft OLED</b>"]),
+    ("Xiaomi 15t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("Xiaomi 15tpro", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("15t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("Xiaomi 15 t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("15tpro", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("15 t pro", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("Xiaomi 15t", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("Xiaomi 15 t", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("15t", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("15 t", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("Xiaomi Poco F7", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("Poco F7", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
+    ("F7", ["Xiaomi 15t", "Xiaomi 15t Pro", "Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
 
 
     ("Xiaomi redmi note 12 pro", ["Xiaomi Redmi Note 12 Pro 5G", "Xiaomi Poco X5 Pro 5G", "Xiaomi Redmi Note 12 Pro Plus", "<b>Display: Soft OLED</b>", "redmi note 12 pro.png"]),
@@ -2532,9 +2535,6 @@ glass_data = [
     ("F7 Ultra", ["Xiaomi Poco F7 Pro", "Xiaomi Poco F7 Ultra", "<b>Display: Soft OLED</b>"]),
 
 
-    ("Xiaomi Poco F7", ["Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
-    ("Poco F7", ["Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
-    ("F7", ["Xiaomi Poco F7", "<b>Display: Soft OLED</b>"]),
 
 
     ("Xiaomi Mi 10T 5G", ["Xiaomi Mi 10T 5G", "Xiaomi Mi 10T Pro 5G", "Xiaomi Redmi K30s", "<b>Display: IPS</b>", "mi10t.png"]),
@@ -2609,6 +2609,12 @@ glass_data = [
 
     ("Honor 200", ["Honor 200", "<b>Display: Soft OLED</b>"]),
     ("Honor200", ["Honor 200", "<b>Display: Soft OLED</b>"]),
+
+    ("Honor Pad 8", ["Honor Pad 8", "Blackview Tab 18", "<b>Display: IPS</b>"]),
+    ("Pad 8", ["Honor Pad 8", "Blackview Tab 18", "<b>Display: IPS</b>"]),
+    ("Blackview Tab 18", ["Honor Pad 8", "Blackview Tab 18", "<b>Display: IPS</b>"]),
+    ("Blackview 18", ["Honor Pad 8", "Blackview Tab 18", "<b>Display: IPS</b>"]),
+    ("Tab 18", ["Honor Pad 8", "Blackview Tab 18", "<b>Display: IPS</b>"]),
 
     ("Honor 400", ["Honor 400", "Honor 400 Pro", "<b>Display: Soft OLED</b>"]),
     ("Honor 400 pro", ["Honor 400", "Honor 400 Pro", "<b>Display: Soft OLED</b>"]),

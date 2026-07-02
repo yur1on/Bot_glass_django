@@ -458,7 +458,7 @@ glass_data9 = [
 
     {"model": "<b>Xiaomi 17T Pro</b>", "height": 160, "width": 75},
 
-    {"model": "<b>Poco F7</b> \nточные размеры 160.8 x 75,6", "height": 161, "width": 75.5},
+
 
     {"model": "<b>Samsung a15 / Samsung a25 / Samsung M15 </b>", "height": 156, "width": 73, "photo_path": "photos/samsung a15.png"},
 
@@ -785,7 +785,13 @@ glass_data9 = [
 
     {"model": "Xiaomi 14", "height": 151, "width": 69.5, "photo_path": "photos/xiaomi 14.png"},
 
-    {"model": "Poco F7", "height": 160.5, "width": 75.5, "photo_path": "photos/poco f7.png"},
+    {"model": "Poco F7/Xiaomi 15t/xiaomi 15t pro \nточные размеры 160.8 x 75,6", "height": 160.5, "width": 75.5, "photo_path": "photos/poco f7.png"},
+
+    {"model": "Samsung S26 Plus \nточные размеры 156 x 73.4", "height": 156, "width": 73.5},
+
+    {"model": "Honor X9d \nточные размеры 159.8 x 74", "height": 160, "width": 74},
+
+    {"model": "Xiaomi 15 \nточные размеры 150.17 x 68.94", "height": 150, "width": 69},
 
     # {"model": "Oppo A17", "height": 155, "width": 71},
     # {"model": "Oppo A17K", "height": 155, "width": 71},
