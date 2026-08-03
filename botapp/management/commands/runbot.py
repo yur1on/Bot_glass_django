@@ -471,10 +471,9 @@ def format_found_response(user_message: str, found_list: list, subscribed: bool)
 
     if hidden_glasses > 0:
         lines.append(build_masked_list(hidden_glasses, style="lottery"))
-        lines.append(f"🔒 <b>Скрыто стекол:</b> {hidden_glasses}")
         lines.append(f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»")
     else:
-        lines.append("Ничего не найдено.")
+        lines.append(f"⭐ Чтобы увидеть результат поиска, оформите подписку: /subscribe или кнопка «{BTN_SUB}»")
 
     return "\n".join(lines), keyboard
 
@@ -1031,18 +1030,27 @@ def build_bot():
 
         found = perform_size_search(height, width)
         await db_save_size_search(chat_id, height, width, len(found), source)
+        subscribed = await db_is_subscribed(chat_id)
 
         if not found:
+            if subscribed:
+                size_not_found_text = (
+                    "❌ <b>По указанным размерам ничего не найдено</b>\n\n"
+                    "Попробуйте увеличить или уменьшить размер на 0.5 мм."
+                )
+            else:
+                size_not_found_text = (
+                    "🔒 <b>Результаты доступны по подписке</b>\n\n"
+                    f"Чтобы увидеть результат подбора, оформите подписку: /subscribe или кнопка «{BTN_SUB}»"
+                )
+
             await bot.send_message(
                 chat_id,
-                "❌ <b>По указанным размерам ничего не найдено</b>\n\n"
-                "Попробуйте увеличить или уменьшить размер на 0.5 мм.",
+                size_not_found_text,
                 parse_mode="html",
             )
             await bot.send_message(chat_id, "Меню:", reply_markup=await create_menu_button())
             return
-
-        subscribed = await db_is_subscribed(chat_id)
 
         await bot.send_message(
             chat_id,
@@ -1065,7 +1073,7 @@ def build_bot():
             await bot.send_message(
                 chat_id,
                 build_masked_list(hidden_count, style="lottery") +
-                f"\n🔒 <b>Скрыто стекол:</b> {hidden_count}\n"
+                "\n"
                 f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»",
                 parse_mode="html"
             )
@@ -1176,7 +1184,6 @@ def build_bot():
             hidden_glasses = len(items)
             if hidden_glasses > 0:
                 response.append(build_masked_list(hidden_glasses, style="lottery"))
-                response.append(f"🔒 <b>Скрыто стекол:</b> {hidden_glasses}")
                 response.append(f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»")
 
             await bot.send_message(chat_id, "\n".join(response), parse_mode="html", reply_markup=kb)
@@ -1203,7 +1210,6 @@ def build_bot():
             hidden_glasses = len(items)
             if hidden_glasses > 0:
                 response.append(build_masked_list(hidden_glasses, style="lottery"))
-                response.append(f"🔒 <b>Скрыто стекол:</b> {hidden_glasses}")
                 response.append(f"⭐ Откройте всё: /subscribe или кнопка «{BTN_SUB}»")
 
             await bot.send_message(chat_id, "\n".join(response), parse_mode="html", reply_markup=kb)
@@ -1221,14 +1227,24 @@ def build_bot():
             await bot.send_message(chat_id, "\n" + AD_TEXT, parse_mode="html", disable_web_page_preview=True)
             return
 
+        if subscribed:
+            not_found_text = (
+                "❌ <b>Ничего не найдено</b>\n\n"
+                "Проверьте:\n"
+                "• правильность написания\n"
+                "• полное название модели\n"
+                "• английскую раскладку\n\n"
+                f"Также можно использовать <b>«{BTN_SIZE}»</b> или команду /size"
+            )
+        else:
+            not_found_text = (
+                "🔒 <b>Результаты доступны по подписке</b>\n\n"
+                f"Чтобы увидеть результат поиска, оформите подписку: /subscribe или кнопка «{BTN_SUB}»"
+            )
+
         await bot.send_message(
             chat_id,
-            "❌ <b>Ничего не найдено</b>\n\n"
-            "Проверьте:\n"
-            "• правильность написания\n"
-            "• полное название модели\n"
-            "• английскую раскладку\n\n"
-            f"Также можно использовать <b>«{BTN_SIZE}»</b> или команду /size",
+            not_found_text,
             parse_mode="html",
             reply_markup=await create_menu_button(),
         )
