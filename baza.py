@@ -3590,6 +3590,21 @@ glass_data = [
     ("Nova Y61", ["Huawei Nova Y61", "<b>Display: IPS</b>"]),
     ("Y61", ["Huawei Nova Y61", "<b>Display: IPS</b>"]),
 
+    ("Huawei Pura 70", ["Huawei Pura 70", "Huawei Pura 80", "<b>Display: Soft OLED</b>"]),
+    ("Pura 70", ["Huawei Pura 70", "Huawei Pura 80", "<b>Display: Soft OLED</b>"]),
+    ("Huawei Pura 80", ["Huawei Pura 70", "Huawei Pura 80", "<b>Display: Soft OLED</b>"]),
+    ("Pura 80", ["Huawei Pura 70", "Huawei Pura 80", "<b>Display: Soft OLED</b>"]),
+
+    ("Huawei Pura 70 Ultra", ["Huawei Pura 70 Ultra", "Huawei Pura 70 Pro", "<b>Display: Soft OLED</b>"]),
+    ("Huawei Pura 70Ultra", ["Huawei Pura 70 Ultra", "Huawei Pura 70 Pro", "<b>Display: Soft OLED</b>"]),
+    ("Pura 70 Ultra", ["Huawei Pura 70 Ultra", "Huawei Pura 70 Pro", "<b>Display: Soft OLED</b>"]),
+    ("Pura 70Ultra", ["Huawei Pura 70 Ultra", "Huawei Pura 70 Pro", "<b>Display: Soft OLED</b>"]),
+
+    ("Huawei Pura 80 Ultra", ["Huawei Pura 80 Ultra", "Huawei Pura 80 Pro", "<b>Display: Soft OLED</b>"]),
+    ("Huawei Pura 80Ultra", ["Huawei Pura 80 Ultra", "Huawei Pura 80 Pro", "<b>Display: Soft OLED</b>"]),
+    ("Pura 80 Ultra", ["Huawei Pura 80 Ultra", "Huawei Pura 80 Pro", "<b>Display: Soft OLED</b>"]),
+    ("Pura 80Ultra", ["Huawei Pura 80 Ultra", "Huawei Pura 80 Pro", "<b>Display: Soft OLED</b>"]),
+
 
     ("OPPO A3s", ["OPPO A3s", "OPPO A5", "OPPO Ax5", "<b>Display: IPS</b>"]),
     ("A3s", ["OPPO A3s", "OPPO A5", "OPPO Ax5", "<b>Display: IPS</b>"]),
@@ -4490,6 +4505,40 @@ glass_data = [
     ("Zero X Pro", ["Tecno Camon 18 Premier", "Infinix Zero X", "Infinix Zero X Pro", "<b>Display: Hard OLED</b>"]),
     ("X Pro", ["Tecno Camon 18 Premier", "Infinix Zero X", "Infinix Zero X Pro", "<b>Display: Hard OLED</b>"]),
 
+
+    ("Tecno Camon 50 4g", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Tecno Camon 50", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Camon 50 4g", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Camon 50", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("CN5", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Tecno Pova 8 Pro 5g", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Tecno Pova 8 Pro", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Pova 8 Pro 5g", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Pova 8 Pro", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Pova 8Pro", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Tecno Pova 8Pro 5g", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Tecno Pova 8Pro", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Pova 8Pro 5g", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Infinix GT 50 Pro", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Infinix GT 50Pro", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("GT 50 Pro", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("GT 50Pro", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("GT50 Pro", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Infinix Note 60 5G", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Infinix Note60 5G", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Note 60 5G", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Note 605G", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Infinix Note 60 Pro 5G", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Infinix Note 60Pro 5G", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Note 60 Pro 5G", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Note 60Pro 5G", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Infinix Note 60 Pro", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Note 60 Pro", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Infinix Note 60 Ultra", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Infinix Note 60Ultra", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Note 60 Ultra", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("Note 60Ultra", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
+    ("x6891", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
 
 
 
@@ -5972,6 +6021,7 @@ glass_data2 = [
     ("Zero 5g", ["Infinix Zero 5G 2023", "Infinix Note 30", "Infinix Hot 30", "Infinix Hot 40 Pro", "Tecno Spark 10 Pro", "Tecno Pova 5", "TCL 40", "<b>Display: IPS</b>", "infinix hot 30.png"]),
     ("Zero", ["Infinix Zero 5G 2023", "Infinix Note 30", "Infinix Hot 30", "Infinix Hot 40 Pro", "Tecno Spark 10 Pro", "Tecno Pova 5", "TCL 40", "<b>Display: IPS</b>", "infinix hot 30.png"]),
     ("Infinix Zero", ["Infinix Zero 5G 2023", "Infinix Note 30", "Infinix Hot 30", "Infinix Hot 40 Pro", "Tecno Spark 10 Pro", "Tecno Pova 5", "TCL 40", "<b>Display: IPS</b>", "infinix hot 30.png"]),
+    ("Note 60", ["Tecno Camon 50 4g", "Tecno Pova 8 Pro 5g", "Infinix GT 50 Pro", "Infinix Note 60 5G", "Infinix Note 60 Pro 5G", "Infinix Note 60 Ultra", "<b>Display: Hard OLED</b>"]),
 
     ("S24", ["Tecno Spark Go-2024", "Tecno Spark Go", "Tecno Spark 20", "Tecno Spark 20C", "Tecno Pop 8", "Infinix Smart 8", "Infinix Smart 8 HD", "Infinix Smart 8 Pro", "Infinix Smart 8 Plus", "Infinix Hot 40i", "Itel P55", "Itel P55 Plus", "Itel P55T", "Itel P55 5G", "Itel Power 50", "Itel RS4", "Itel 24L", "Itel A70S", "Itel S24", "<b>Display: IPS</b>", "Tecno Spark 20.png"]),
 
